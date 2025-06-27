@@ -50,11 +50,6 @@ taskmanager-ui/
 
 ### 1. Clone the Repository
 
-```bash
-git clone https://github.com/your-username/taskmanager.git
-cd taskmanager/taskmanager-ui
-```
-
 ### 2. Install Dependencies
 
 ```bash
@@ -77,13 +72,7 @@ This project uses **JWT (JSON Web Token)** authentication. You can integrate it 
 
 > 🔗 Note: Update `proxy.conf.json` to route requests to your backend API.
 
----
 
-## 📷 Screenshots
-
-> Add your actual UI screenshots here in a `screenshots/` folder.
-
----
 
 ## 📈 Future Improvements
 

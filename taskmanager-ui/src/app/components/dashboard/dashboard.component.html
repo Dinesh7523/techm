@@ -1,0 +1,116 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <mat-toolbar color="primary" class="header">
+    <span>Task Manager</span>
+    <span class="spacer"></span>
+    <button mat-icon-button [matMenuTriggerFor]="profileMenu" matTooltip="Profile">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #profileMenu="matMenu">
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </mat-toolbar>
+
+  <!-- Main Content -->
+  <div class="content">
+    <!-- Filters Section -->
+    <div class="filters mat-elevation-z2">
+      <h3>Filters</h3>
+      <div class="filter-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Search by title</mat-label>
+          <input matInput [(ngModel)]="searchTitle" (ngModelChange)="applyFilters()">
+          <button mat-icon-button matSuffix (click)="searchTitle=''; applyFilters()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Priority</mat-label>
+          <mat-select [(ngModel)]="selectedPriority" (selectionChange)="applyFilters()">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option [value]="1">High</mat-option>
+            <mat-option [value]="2">Medium</mat-option>
+            <mat-option [value]="3">Low</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="selectedStatus" (selectionChange)="applyFilters()">
+            <mat-option [value]="null">All</mat-option>
+            <mat-option [value]="false">Pending</mat-option>
+            <mat-option [value]="true">Completed</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Deadline</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="applyFilters()">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <button mat-icon-button matSuffix *ngIf="selectedDate" (click)="selectedDate=null; applyFilters()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <button mat-stroked-button color="warn" (click)="clearFilters()" class="clear-filters">
+          <mat-icon>filter_alt_off</mat-icon>
+          Clear Filters
+          
+        </button>
+      </div>
+    </div>
+
+    <!-- Tasks Grid -->
+    <div class="tasks-grid">
+      <mat-card *ngFor="let task of filteredTasks" class="task-card" [class.completed]="task.isCompleted" [class.overdue]="isOverdue(task)">
+        <mat-card-header>
+          <mat-card-title>
+            {{ task.title }}
+            <span class="priority-badge" [style.background-color]="getPriorityColor(task.priority)">
+              {{ getPriorityLabel(task.priority) }}
+            </span>
+          </mat-card-title>
+          <mat-card-subtitle>
+            Due: {{ task.deadline | date:'medium' }}
+            <span *ngIf="isOverdue(task)" class="overdue-badge">Overdue</span>
+          </mat-card-subtitle>
+        </mat-card-header>
+
+        <mat-card-content>
+          <p>{{ task.description }}</p>
+        </mat-card-content>
+
+        <mat-card-actions align="end">
+          <mat-checkbox 
+            [checked]="task.isCompleted"
+            (change)="toggleTaskStatus(task)"
+            matTooltip="{{ task.isCompleted ? 'Mark as incomplete' : 'Mark as complete' }}">
+            {{ task.isCompleted ? 'Completed' : 'Complete' }}
+          </mat-checkbox>
+          <button mat-icon-button color="primary" (click)="openTaskForm(task)" matTooltip="Edit task">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteTask(task.id)" matTooltip="Delete task">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <!-- Empty state -->
+      <div *ngIf="filteredTasks.length === 0" class="empty-state">
+        <mat-icon>assignment</mat-icon>
+        <h3>No tasks found</h3>
+        <p>Try clearing some filters or create a new task</p>
+        <button mat-raised-button color="primary" (click)="openTaskForm()">
+          <mat-icon>add</mat-icon>
+          Create Task
+        </button>
+      </div>
+    </div>
+  </div>
+</div> 
